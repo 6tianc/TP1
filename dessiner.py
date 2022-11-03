@@ -27,7 +27,7 @@ class struct:
 
 def createButtons(colors, size, space, colorErase):
 
-    # distance between one corner of one button to the same corner of the next button
+    # distance between one corner of one button to the same corner of the next
     corn2corn = space + size  
              
     buttons = []
