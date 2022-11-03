@@ -8,8 +8,45 @@
 # fillRectangle(x, y, width, height, color), getPixel(x, y), getMouse(),
 # exportScreen()
 
+# class struct allows for python to have registers like in CodeBoot
+
+class struct:
+ def __init__(self, **fields):
+    self.__dict__.update(fields)
+ def __repr__(self):
+    return 'struct('+(', '.join(list(map(lambda f:f+'='+repr(self.__dict__[f]),
+                                         self.__dict__))))+')'
+
+# createButtons will create a list of buttons with "erase" as the first button
+# the following buttons will be the colors in the list "colors".
+# parameters:   list colors (the button colors that you want), 
+#               value size of the width each square button 
+#               value spacing between the buttons 
+#               value colorErase is the color to paint over when using "erase"
+# output:       list of buttons (structures with corner1, corner2, color, bool)
+
 def createButtons(colors, size, space, colorErase):
-    pass
+
+    # distance between one corner of one button to the same corner of the next button
+    corn2corn = space + size  
+             
+    buttons = []
+    buttons.append(struct(corner1 = struct(x = space, y = space), 
+                          corner2 = struct(x = corn2corn, y = corn2corn), 
+                          couleur = colorErase, effacer = True))
+    lengthColors = len(colors)                      
+    for i in range(lengthColors):  # from 0 to lengthColors-1
+            buttons.append(struct(corner1 = struct(x = buttons[i].corner1.x 
+                                                   + corn2corn, y = space), 
+                                  corner2 = struct(x = buttons[i].corner2.x + 
+                                                   corn2corn, y = corn2corn), 
+                                  couleur = colors[i], effacer = False))
+    return buttons
+
+# testing createButtons
+# print(createButtons(["#f00"], 12, 6, "#fff"))
+
+
 
 def findButtons(buttons, position):
     pass
