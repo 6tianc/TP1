@@ -33,14 +33,14 @@ def createButtons(colors, size, space, colorErase):
     buttons = []
     buttons.append(struct(corner1 = struct(x = space, y = space), 
                           corner2 = struct(x = corn2corn, y = corn2corn), 
-                          couleur = colorErase, effacer = True))
+                          color = colorErase, effacer = True))
     lengthColors = len(colors)                      
     for i in range(lengthColors):  # from 0 to lengthColors-1
             buttons.append(struct(corner1 = struct(x = buttons[i].corner1.x 
                                                    + corn2corn, y = space), 
                                   corner2 = struct(x = buttons[i].corner2.x + 
                                                    corn2corn, y = corn2corn), 
-                                  couleur = colors[i], effacer = False))
+                                  color = colors[i], effacer = False))
     return buttons
 
 # testing createButtons
@@ -66,21 +66,70 @@ def findButtons(buttons, position):
 # print(findButtons(createButtons(["#f00"], 12, 6, "#fff"), struct(x=7, y=7)))
 # print(findButtons(createButtons(["#f00"], 12, 6, "#fff"), struct(x=5, y=5)))
 
+# the function drawFloatingRectangle loops at every 0.1s to get the position 
+# and state of the cursor. 
+
 def drawFloatingRectangle(originalImage, start, color):
     pass
 
+# restoreImage restores the image when the user drags the cursor to make a 
+#              smaller selection
+# parameters: originalImage is a list of lists containing the original colors
+#                           of each pixel
+#             rectangle is a struct containing corner1 and corner2 of the area
+#                       to restore.
+# output: image is a list of lists with the restored values
+
 def restoreImage(originalImage, rectangle):
-    pass
+    for yVal in range(rectangle.corner1.y, rectangle.corner2.y):
+        for xVal in range(rectangle.corner1.x, rectangle.corner2.x):
+            setPixel(xVal, yVal, originalImage[xVal][yVal])
+    
+
+# addRectangle draws a rectangle onto the same image given as parameter
+# parameters: image is a list of pixels displaying which color each pixel is
+#                      this list is usually created using exportScreen()
+#             rectangle is a struct containing corner1 and corner2
+#             color is a string with a hex color value of template '#fff'
+# output: None, this function changes the values of parameter image and screen
 
 def addRectangle(image, rectangle, color):
-    pass
+    width = rectangle.corner2.x - rectangle.corner1.x
+    height = rectangle.corner2.y - rectangle.corner1.y
+    fillRectangle(rectangle.corner1.x, rectangle.corner1.y, width, height, 
+                  color)
+    image[rectangle.corner1.x:rectangle.corner2.x][rectangle.corner1.y:
+          rectangle.corner2.y] = height * [width * [color]]  # potential bug
 
 def handleNextClick(buttons):
     pass
 
+# the function convertImage takes an exportScreen() output and returns a list 
+# of lists where image[x][y] returns the color of pixel at x,y
+# parameter: screen is a string from exportScreen() 
+# output: list of lists where each element is a color of form '#fff'
+
+def convertImage(screen):
+    rows = screen.split('\n')
+    n=len(rows)
+    image=[]
+    for i in range(n):
+        image.append(rows[i].strip('#').split("#"))
+    xLength = len(image)
+    ylength = len(image[0])
+    for xVal in range(xLength):
+        for yVal in range(ylength):
+            image[xVal][yVal] = '#'+ image[xVal][yVal]
+    return image
+
+
+
 def draw():
-    width = 180
-    height = 120
+    screenWidth = 180
+    screenHeight = 120
+    menuHeight = 24
+    spacing = 6
+    size = 12
     white = "#fff"
     black =  "#000"
     red = "#f00"
@@ -89,8 +138,40 @@ def draw():
     blue =  "#00f"
     fuchsia = "#f0f"
     colors = [white, black, red, yellow, lime, blue, fuchsia]
+    setScreenMode(screenWidth, screenHeight)
+    screen = struct(corner1 = struct(x = 0, y = 0), 
+                    corner2 = struct(x = screenWidth, y = screenHeight))
+    menu = struct(corner1 = struct(x = 0, y = 0), 
+                  corner2 = struct(x = screenWidth, y = menuHeight))
+    currentScreen = convertImage(exportScreen())
 
+    # make screen white
+    addRectangle(currentScreen, screen, "#fff")
+
+    # draw menu
+    addRectangle(currentScreen, menu, "#888")
+
+    # draw buttons in menu
+    buttonList = createButtons(colors, size, spacing, '#fff')
+    for currentButton in buttonList:
+        insideButton = struct(corner1 = struct(x = currentButton.corner1.x+1,
+                                               y = currentButton.corner1.y+1),
+                              corner2 = struct(x = currentButton.corner2.x-1,
+                                               y = currentButton.corner2.y-1))
+        addRectangle(currentScreen, currentButton, '#000') # black border
+        addRectangle(currentScreen, insideButton, currentButton.color)
+    
+    # draw red x on first erase button
+    for i in range(1, size - 1):
+        setPixel(spacing + i, spacing + i, "#f00")
+        setPixel(buttonList[0].corner2.x - 1 - i, spacing + i, '#f00')
+    
+    # handleNextClick(buttonList)
+
+# REMOVE BEFORE HANDING IN ------------------------------------------------
+draw()
+# -------------------------------------------------------------------------
 def testDraw():
-    assert (1 == 1)
+    assert (1 == 1)     # 5 to 10 asserts
 
 testDraw()
