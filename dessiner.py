@@ -8,7 +8,7 @@
 # fillRectangle(x, y, width, height, color), getPixel(x, y), getMouse(),
 # exportScreen()
 
-# class struct allows for python to have registers like in CodeBoot
+# class struct allows for python to have structs like in CodeBoot
 
 class struct:
  def __init__(self, **fields):
@@ -46,10 +46,25 @@ def createButtons(colors, size, space, colorErase):
 # testing createButtons
 # print(createButtons(["#f00"], 12, 6, "#fff"))
 
-
+# the function findButtons will check whether there is a button at the location
+# of position
+# parameters: list buttons is a list containing struct for each button color
+#                          this list is usually created using createButtons
+#             position is a struct containing x and y of the position to search
+# output: returns the struct of the button at position position.
+#         if no button is present, return None
 
 def findButtons(buttons, position):
-    pass
+    for currentButton in buttons:
+        if ((currentButton.corner1.x <= position.x <= currentButton.corner2.x) 
+            and 
+           (currentButton.corner1.y <= position.y <= currentButton.corner2.y)):
+            return currentButton
+    return None
+
+# testing findButtons
+# print(findButtons(createButtons(["#f00"], 12, 6, "#fff"), struct(x=7, y=7)))
+# print(findButtons(createButtons(["#f00"], 12, 6, "#fff"), struct(x=5, y=5)))
 
 def drawFloatingRectangle(originalImage, start, color):
     pass
