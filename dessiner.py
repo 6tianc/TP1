@@ -110,12 +110,12 @@ def drawFloatingRectangle(originalImage, start, color):
     imageCopy = originalImage[:][:]
 
     # position of the previous iteration
-    iniPos = start
+    iniPos = struct(x = start.x, y = start.y)
     global currentColor
 
     while getMouse().button :
         currentPos = struct(x = getMouse().x, y = getMouse().y)
-        print(start)
+
         # if rectangle shrinks in x from the positive
         if start.x < currentPos.x < iniPos.x:
             
@@ -211,9 +211,10 @@ def addRectangle(image, rectangle, color):
 # handleNextClick 
 currentColor = '#fff'
 def handleNextClick(buttons):
+    iter = 0
     while True:
         if getMouse().button == 1:
-            position = struct(x = getMouse().x, y = getMouse().y)
+            
             menuHeight = 24       # to correct later
             global currentColor   # to correct later
             if (findButtons(buttons, position) is None and 
@@ -237,8 +238,13 @@ def handleNextClick(buttons):
             else:
                 currentColor = findButtons(buttons, position).color
             sleep(0.01)
+        elif getMouse().button == 0:
+            position = struct(x = getMouse().x, y = getMouse().y)
+            sleep(0.01)
         else:
             sleep(0.01)
+        iter += 1
+        print(iter)
         
                 
 

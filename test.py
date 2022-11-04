@@ -12,12 +12,12 @@ n=len(rows)
 image=[]
 for i in range(n):
     image.append(rows[i].strip('#').split("#"))
-xLength = len(image)
-ylength = len(image[0])
-for xVal in range(xLength):
-    for yVal in range(ylength):
-        image[xVal][yVal] = '#'+ image[xVal][yVal]
-# print(image)
+# xLength = len(image)
+# ylength = len(image[0])
+# for xVal in range(xLength):
+#     for yVal in range(ylength):
+#         image[xVal][yVal] = '#'+ image[xVal][yVal]
+print(image)
 
 # for i in a:
 #     print(i)
@@ -28,8 +28,3 @@ for xVal in range(xLength):
 # b = [[0,423,2323,53,12],[]]
 # changeTable(b)
 # print(b)
-
-a = None
-b = None
-
-print(a is b)
