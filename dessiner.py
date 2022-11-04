@@ -3,10 +3,33 @@
 # November 1st 2022
 # Travail Pratique 1
 
-# codeBoot functions: setScreenMode(width, height), getScreenWidth(),
-# getScreenHeight(), setPixel(x, y, color), 
-# fillRectangle(x, y, width, height, color), getPixel(x, y), getMouse(),
-# exportScreen()
+#TO BE REMOVED BEFORE HANDING IN --------------------------------------------
+
+# codeBoot functions 
+
+def setScreenMode():
+    pass
+
+def getScreenWidth():
+    pass
+
+def getScreenHeight():
+    pass
+
+def setPixel(x,y,color):
+    pass
+
+def fillRectangle(x,y,width,height,color):
+    pass
+
+def getPixel(x,y):
+    pass
+
+def getMouse():
+    pass
+
+def exportScreen():
+    pass
 
 # class struct allows for python to have structs like in CodeBoot
 
@@ -16,6 +39,8 @@ class struct:
  def __repr__(self):
     return 'struct('+(', '.join(list(map(lambda f:f+'='+repr(self.__dict__[f]),
                                          self.__dict__))))+')'
+
+# ----------------------------------------------------------------------------
 
 # createButtons will create a list of buttons with "erase" as the first button
 # the following buttons will be the colors in the list "colors".
