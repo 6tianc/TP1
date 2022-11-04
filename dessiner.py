@@ -31,6 +31,9 @@ def getMouse():
 def exportScreen():
     pass
 
+def sleep(second):
+    pass
+
 # class struct allows for python to have structs like in CodeBoot
 
 class struct:
@@ -58,14 +61,14 @@ def createButtons(colors, size, space, colorErase):
     buttons = []
     buttons.append(struct(corner1 = struct(x = space, y = space), 
                           corner2 = struct(x = corn2corn, y = corn2corn), 
-                          color = colorErase, effacer = True))
+                          color = colorErase, erase = True))
     lengthColors = len(colors)                      
     for i in range(lengthColors):  # from 0 to lengthColors-1
             buttons.append(struct(corner1 = struct(x = buttons[i].corner1.x 
                                                    + corn2corn, y = space), 
                                   corner2 = struct(x = buttons[i].corner2.x + 
                                                    corn2corn, y = corn2corn), 
-                                  color = colors[i], effacer = False))
+                                  color = colors[i], erase = False))
     return buttons
 
 # testing createButtons
@@ -92,10 +95,69 @@ def findButtons(buttons, position):
 # print(findButtons(createButtons(["#f00"], 12, 6, "#fff"), struct(x=5, y=5)))
 
 # the function drawFloatingRectangle loops at every 0.1s to get the position 
-# and state of the cursor. 
+# and state of the cursor. As long as the mouse pointer is being held down, a
+# floating rectangle is drawn over the start position and the current position.
+# If the floating rectangle shrinks, the original image over the shrunken part
+# should be restored.
+# parameters: originalImage is a list of lists containing the color value of 
+#                           each pixel
+#             start is a struct with x and y value where the floating rectangle
+#                   should start being drawn
+#             color is the value of the color the rectangle should take
+# output: None, the originalImage value will get changed.
 
 def drawFloatingRectangle(originalImage, start, color):
-    pass
+    imageCopy = originalImage[:][:]
+    currentPos = struct(x = getMouse().x, y = getMouse().y)
+    rectangle = struct(corner1 = struct(x = min(currentPos.x, start.x), 
+                                        y = min(currentPos.y, start.y)),
+                       corner2 = struct(x = max(currentPos.x, start.x), 
+                                        y = max(currentPos.y, start.y)))
+    # position of the previous iteration
+    iniPos = start
+    global currentColor
+
+    while getMouse().button:
+        # if rectangle shrinks in x from the positive
+        if start.x < getMouse().x < iniPos.x:
+            
+            rectX = struct(corner1 = struct(x = getMouse().x, y = start.y),
+                           corner2 = struct(x = iniPos.x, y = getMouse().y))
+            restoreImage(originalImage, rectX)
+        
+        # if rectangle shrinks in x from the negative
+        elif start.x > getMouse().x > iniPos.x:
+            rectX = struct(corner1 = struct(x = iniPos.x, y = getMouse().y),
+                           corner2 = struct(x = getMouse().x, y = start.y))
+            restoreImage(originalImage, rectX)
+        
+        # if rectangle doesn't shrink in x, add rectangle
+        else:
+            addRectangle(imageCopy, rectangle, currentColor)
+        
+        # if rectangle shrinks in y from the positive
+        if start.y < getMouse().y < iniPos.y:
+            rectY = struct(corner1 = struct(x = start.x, y = getMouse().y),
+                           corner2 = struct(x = iniPos.x, y = iniPos.y))
+            restoreImage(originalImage, rectY)
+        
+        # if rectangle shrinks in y from the negative
+        elif start.y > getMouse().y > iniPos.y:
+            rectY = struct(corner1 = struct(x = iniPos.x, y = iniPos.y),
+                           corner2 = struct(x = start.x, y = getMouse().y))
+            restoreImage(originalImage, rectY)
+        
+        # if rectangle doesn't shrink in y, add rectangle
+        else:
+            addRectangle(imageCopy, rectangle, currentColor)
+
+        sleep(0.01)
+        iniPos.x = getMouse().x
+        iniPos.y = getMouse().y
+
+    originalImage[:] = convertImage(exportScreen())[:]
+
+                        
 
 # restoreImage restores the image when the user drags the cursor to make a 
 #              smaller selection
@@ -103,7 +165,7 @@ def drawFloatingRectangle(originalImage, start, color):
 #                           of each pixel
 #             rectangle is a struct containing corner1 and corner2 of the area
 #                       to restore.
-# output: image is a list of lists with the restored values
+# output: None, image is a list of lists with the restored values
 
 def restoreImage(originalImage, rectangle):
     for yVal in range(rectangle.corner1.y, rectangle.corner2.y):
@@ -126,8 +188,40 @@ def addRectangle(image, rectangle, color):
     image[rectangle.corner1.x:rectangle.corner2.x][rectangle.corner1.y:
           rectangle.corner2.y] = height * [width * [color]]  # potential bug
 
+# handleNextClick 
+
 def handleNextClick(buttons):
-    pass
+    while True:
+        if getMouse().button != 1:
+            sleep(0.01)
+        else:
+            position = struct(x = getMouse().x, y = getMouse().y)
+            nonlocal menuHeight
+            nonlocal currentColor
+            if (findButtons(buttons, position) is None and 
+                position.y <= menuHeight):
+                pass
+            elif (getScreenHeight() > position.y > 24 and 
+                  0 < position.x < getScreenWidth()):
+                image = convertImage(exportScreen())
+                drawFloatingRectangle(image, position, currentColor)
+            elif findButtons(buttons, position).erase:
+                rect = struct(corner1 = struct(x = 0, y = menuHeight), 
+                              corner2 = struct(x = getScreenWidth(), 
+                                               y = getScreenHeight()))
+                # do not draw in the menu
+                if rect.corner1.y <= 24:
+                    rect.corner1.y = 25
+                if rect.corner2.y <= 24:
+                    rect.corner2.y = 25  
+                addRectangle(convertImage(exportScreen()), rect, 
+                             buttons[0].color)
+            else:
+                currentColor = findButtons(buttons, position).color
+                
+
+
+    
 
 # the function convertImage takes an exportScreen() output and returns a list 
 # of lists where image[x][y] returns the color of pixel at x,y
@@ -146,8 +240,6 @@ def convertImage(screen):
         for yVal in range(ylength):
             image[xVal][yVal] = '#'+ image[xVal][yVal]
     return image
-
-
 
 def draw():
     screenWidth = 180
@@ -169,6 +261,10 @@ def draw():
     menu = struct(corner1 = struct(x = 0, y = 0), 
                   corner2 = struct(x = screenWidth, y = menuHeight))
     currentScreen = convertImage(exportScreen())
+    currentX, currentY = getMouse().x, getMouse().y
+
+    # starting color value
+    currentColor = '#fff'                           
 
     # make screen white
     addRectangle(currentScreen, screen, "#fff")
@@ -191,7 +287,7 @@ def draw():
         setPixel(spacing + i, spacing + i, "#f00")
         setPixel(buttonList[0].corner2.x - 1 - i, spacing + i, '#f00')
     
-    # handleNextClick(buttonList)
+    handleNextClick(buttonList)
 
 # REMOVE BEFORE HANDING IN ------------------------------------------------
 draw()

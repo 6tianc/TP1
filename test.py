@@ -17,4 +17,19 @@ ylength = len(image[0])
 for xVal in range(xLength):
     for yVal in range(ylength):
         image[xVal][yVal] = '#'+ image[xVal][yVal]
-print(image)
+# print(image)
+
+# for i in a:
+#     print(i)
+
+# def changeTable(tab):
+#     print(tab)
+#     tab[:] = [0,2]
+# b = [[0,423,2323,53,12],[]]
+# changeTable(b)
+# print(b)
+
+a = None
+b = None
+
+print(a is b)
