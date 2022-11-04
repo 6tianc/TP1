@@ -108,52 +108,72 @@ def findButtons(buttons, position):
 
 def drawFloatingRectangle(originalImage, start, color):
     imageCopy = originalImage[:][:]
-    currentPos = struct(x = getMouse().x, y = getMouse().y)
-    rectangle = struct(corner1 = struct(x = min(currentPos.x, start.x), 
-                                        y = min(currentPos.y, start.y)),
-                       corner2 = struct(x = max(currentPos.x, start.x), 
-                                        y = max(currentPos.y, start.y)))
+
     # position of the previous iteration
     iniPos = start
     global currentColor
 
-    while getMouse().button:
+    while getMouse().button :
+        currentPos = struct(x = getMouse().x, y = getMouse().y)
+        print(start)
         # if rectangle shrinks in x from the positive
-        if start.x < getMouse().x < iniPos.x:
+        if start.x < currentPos.x < iniPos.x:
             
-            rectX = struct(corner1 = struct(x = getMouse().x, y = start.y),
-                           corner2 = struct(x = iniPos.x, y = getMouse().y))
+            rectX = struct(corner1 = struct(x = currentPos.x, y = start.y),
+                           corner2 = struct(x = iniPos.x, y = currentPos.y))
             restoreImage(originalImage, rectX)
         
         # if rectangle shrinks in x from the negative
-        elif start.x > getMouse().x > iniPos.x:
-            rectX = struct(corner1 = struct(x = iniPos.x, y = getMouse().y),
-                           corner2 = struct(x = getMouse().x, y = start.y))
+        elif start.x > currentPos.x > iniPos.x:
+            rectX = struct(corner1 = struct(x = iniPos.x, y = currentPos.y),
+                           corner2 = struct(x = currentPos.x, y = start.y))
             restoreImage(originalImage, rectX)
         
         # if rectangle doesn't shrink in x, add rectangle
         else:
+            rectangle = struct(
+                corner1 = struct(x = min(currentPos.x, start.x), 
+                                 y = min(currentPos.y, start.y)),
+                corner2 = struct(x = max(currentPos.x, start.x) + 1, 
+                                 y = max(currentPos.y, start.y)+1))
+            # stop drawing on the menu
+            if rectangle.corner1.y < 24:
+                rectangle.corner1.y = 24
+            if rectangle.corner2.y < 24:
+                rectangle.corner2.y = 24
             addRectangle(imageCopy, rectangle, currentColor)
         
         # if rectangle shrinks in y from the positive
-        if start.y < getMouse().y < iniPos.y:
-            rectY = struct(corner1 = struct(x = start.x, y = getMouse().y),
+        if start.y < currentPos.y < iniPos.y:
+            rectY = struct(corner1 = struct(x = start.x, y = currentPos.y),
                            corner2 = struct(x = iniPos.x, y = iniPos.y))
             restoreImage(originalImage, rectY)
         
         # if rectangle shrinks in y from the negative
-        elif start.y > getMouse().y > iniPos.y:
+        elif start.y > currentPos.y > iniPos.y:
             rectY = struct(corner1 = struct(x = iniPos.x, y = iniPos.y),
-                           corner2 = struct(x = start.x, y = getMouse().y))
+                           corner2 = struct(x = start.x, y = currentPos.y))
             restoreImage(originalImage, rectY)
         
         # if rectangle doesn't shrink in y, add rectangle
         else:
+            rectangle = struct(
+                corner1 = struct(x = min(currentPos.x, start.x), 
+                                 y = min(currentPos.y, start.y)),
+                corner2 = struct(x = max(currentPos.x, start.x) + 1, 
+                                 y = max(currentPos.y, start.y)+1))
+
+            # stop drawing on the menu
+            if rectangle.corner1.y < 24:
+                rectangle.corner1.y = 24
+            if rectangle.corner2.y < 24:
+                rectangle.corner2.y = 24
+
             addRectangle(imageCopy, rectangle, currentColor)
 
         sleep(0.01)
-        iniPos.x = getMouse().x
-        iniPos.y = getMouse().y
+        iniPos.x = currentPos.x
+        iniPos.y = currentPos.y
 
     originalImage[:] = convertImage(exportScreen())[:]
 
@@ -189,15 +209,13 @@ def addRectangle(image, rectangle, color):
           rectangle.corner2.y] = height * [width * [color]]  # potential bug
 
 # handleNextClick 
-
+currentColor = '#fff'
 def handleNextClick(buttons):
     while True:
-        if getMouse().button != 1:
-            sleep(0.01)
-        else:
+        if getMouse().button == 1:
             position = struct(x = getMouse().x, y = getMouse().y)
-            nonlocal menuHeight
-            nonlocal currentColor
+            menuHeight = 24       # to correct later
+            global currentColor   # to correct later
             if (findButtons(buttons, position) is None and 
                 position.y <= menuHeight):
                 pass
@@ -210,14 +228,18 @@ def handleNextClick(buttons):
                               corner2 = struct(x = getScreenWidth(), 
                                                y = getScreenHeight()))
                 # do not draw in the menu
-                if rect.corner1.y <= 24:
-                    rect.corner1.y = 25
-                if rect.corner2.y <= 24:
-                    rect.corner2.y = 25  
+                if rect.corner1.y < 24:
+                    rect.corner1.y = 24
+                if rect.corner2.y < 24:
+                    rect.corner2.y = 24  
                 addRectangle(convertImage(exportScreen()), rect, 
                              buttons[0].color)
             else:
                 currentColor = findButtons(buttons, position).color
+            sleep(0.01)
+        else:
+            sleep(0.01)
+        
                 
 
 
