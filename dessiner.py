@@ -113,7 +113,11 @@ def drawFloatingRectangle(originalImage, start, color):
     iniPos = struct(x = start.x, y = start.y)
     
     while getMouse().button:           # continue loop while mouse button held
-        currentPos = struct(x = getMouse().x, y = getMouse().y)
+        currentPos = struct(x = getMouse().x + 1, y = getMouse().y + 1)
+        if currentPos.x > getScreenWidth():
+            currentPos.x = getScreenWidth
+        if currentPos.y > getScreenHeight():
+            currentPos.y = getScreenHeight()
         if currentPos.y <24:
             currentPos.y = 24
         
@@ -350,7 +354,7 @@ def drawFloatingRectangle(originalImage, start, color):
 
         iniPos = currentPos            # update previous position for next loop
         sleep(0.01)
-    originalImage = imageCopy
+    originalImage[:] = convertImage(exportScreen())[:]
 
                         
 
@@ -372,11 +376,6 @@ def restoreImage(originalImage, rectangle):
     for x in range(minX, maxX):
         for y in range(minY, maxY):
             setPixel(x, y, originalImage[y][x])
-
-    return originalImage[minY:maxY][minX:maxX]
-    # for yVal in range(rectangle.corner1.y, rectangle.corner2.y):
-    #     for xVal in range(rectangle.corner1.x, rectangle.corner2.x):
-    #         setPixel(xVal, yVal, originalImage[xVal][yVal])
     
 
 # addRectangle draws a rectangle onto the same image given as parameter
@@ -396,21 +395,16 @@ def addRectangle(image, rectangle, color):
           rectangle.corner2.y] = height * [width * [color]]  # potential bug
 
 # handleNextClick 
-currentColor = '#fff'
 def handleNextClick(buttons):
-
+    image = convertImage(exportScreen())
+    color = "#fff"
+    menuHeight = 24       # to correct later
     while True:
         position = struct(x = getMouse().x, y = getMouse().y)             
         if getMouse().button == 1:            
-            menuHeight = 24       # to correct later
-            global currentColor   # to correct later
-            if (findButtons(buttons, position) is None and 
-                position.y <= menuHeight):
-                pass
-            elif (getScreenHeight() > position.y > 24 and 
-                    0 < position.x < getScreenWidth()):
-                return True
-            elif findButtons(buttons, position).erase:
+
+            if (findButtons(buttons, position) is not None and findButtons(
+                buttons, position).erase):
                 rect = struct(corner1 = struct(x = 0, y = menuHeight), 
                                 corner2 = struct(x = getScreenWidth(), 
                                                 y = getScreenHeight()))
@@ -421,10 +415,16 @@ def handleNextClick(buttons):
                     rect.corner2.y = 24  
                 addRectangle(convertImage(exportScreen()), rect, 
                                 buttons[0].color)
+                image = convertImage(exportScreen())
             elif (findButtons(buttons, position) is not None):
-                return (findButtons(buttons, position).color)
+                color = findButtons(buttons, position).color
+            elif (getScreenHeight() > position.y > 24 and 
+                    0 < position.x < getScreenWidth()):
+                drawFloatingRectangle(image, position, color)
+            else:
+                pass
      
-        sleep(0.01)
+        sleep(0.001)
 
     
 
@@ -465,10 +465,7 @@ def draw():
                     corner2 = struct(x = screenWidth, y = screenHeight))
     menu = struct(corner1 = struct(x = 0, y = 0), 
                   corner2 = struct(x = screenWidth, y = menuHeight))
-    currentScreen = convertImage(exportScreen())
-
-    # starting color value
-    currentColor = '#fff'                           
+    currentScreen = convertImage(exportScreen())                       
 
     # make screen white
     addRectangle(currentScreen, screen, "#fff")
@@ -490,16 +487,9 @@ def draw():
     for i in range(1, size - 1):
         setPixel(spacing + i, spacing + i, "#f00")
         setPixel(buttonList[0].corner2.x - 1 - i, spacing + i, '#f00')
-    
-    while True:
-        position = struct(x = getMouse().x, y = getMouse().y)  
-        if handleNextClick(buttonList) == True:
-            image = convertImage(exportScreen())
-            position = struct(x = getMouse().x, y = getMouse().y)  
-            drawFloatingRectangle(image, position, currentColor)
-        else:
-            currentColor = handleNextClick(buttonList)
-        sleep(0.01)
+
+    image = convertImage(exportScreen())
+    handleNextClick(buttonList)
 
 # REMOVE BEFORE HANDING IN ------------------------------------------------
 draw()
