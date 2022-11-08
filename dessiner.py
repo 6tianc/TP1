@@ -122,6 +122,7 @@ def drawFloatingRectangle(originalImage, start, color):
                                             y = min(currentPos.y,start.y)), 
                            corner2 = struct(x = max(currentPos.x, start.x), 
                                             y = max(currentPos.y, start.y)))
+            addRectangle(imageCopy, rectX, color)
 
         if iniPos.x > start.x and iniPos.y > start.y:
             if currentPos.x == iniPos.x and currentPos.y == iniPos.y:
@@ -344,7 +345,7 @@ def drawFloatingRectangle(originalImage, start, color):
                 restoreImage(originalImage, rectY)
 
         iniPos = currentPos            # update previous position for next loop
-        sleep(0.001)
+        sleep(0.01)
     originalImage = imageCopy
 
                         
@@ -419,7 +420,7 @@ def handleNextClick(buttons):
             elif (findButtons(buttons, position) is not None):
                 return (findButtons(buttons, position).color)
      
-        sleep(0.001)
+        sleep(0.01)
 
     
 
@@ -494,7 +495,7 @@ def draw():
             drawFloatingRectangle(image, position, currentColor)
         else:
             currentColor = handleNextClick(buttonList)
-        sleep(0.001)
+        sleep(0.01)
 
 # REMOVE BEFORE HANDING IN ------------------------------------------------
 draw()
