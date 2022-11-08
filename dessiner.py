@@ -104,7 +104,7 @@ def findButtons(buttons, position):
 #             start is a struct with x and y value where the floating rectangle
 #                   should start being drawn
 #             color is the value of the color the rectangle should take
-# output: None, the originalImage value will get changed.
+# output: No output, the originalImage value will get changed.
 
 def drawFloatingRectangle(originalImage, start, color):
     imageCopy = originalImage[:][:]
@@ -364,7 +364,7 @@ def drawFloatingRectangle(originalImage, start, color):
 #                           of each pixel
 #             rectangle is a struct containing corner1 and corner2 of the area
 #                       to restore.
-# output: None, image is a list of lists with the restored values
+# output: No output, image is a list of lists with the restored values
 
 def restoreImage(originalImage, rectangle):
     minX = rectangle.corner1.x
@@ -383,7 +383,8 @@ def restoreImage(originalImage, rectangle):
 #                      this list is usually created using exportScreen()
 #             rectangle is a struct containing corner1 and corner2
 #             color is a string with a hex color value of template '#fff'
-# output: None, this function changes the values of parameter image and screen
+# output: No output, this function changes the values of parameter image and 
+#         screen
 
 def addRectangle(image, rectangle, color):
     width = rectangle.corner2.x - rectangle.corner1.x
@@ -394,7 +395,15 @@ def addRectangle(image, rectangle, color):
     image[rectangle.corner1.x:rectangle.corner2.x][rectangle.corner1.y:
           rectangle.corner2.y] = height * [width * [color]]  # potential bug
 
-# handleNextClick 
+# handleNextClick starts a loop that waits for a click every 0.01s. When a 
+# click is found, it will check whether it is on a button or in the drawing
+# space. If the click is on the reset button, the drawing is reset. If the 
+# click is on a color button, the color of the next rectangle is changed to the
+# selected color. If the click is on the drawing area, it will begin the 
+# drawing process.
+# parameters: buttons is a list of buttons created using the createButtons() 
+#             function
+# output: No output.
 def handleNextClick(buttons):
     image = convertImage(exportScreen())
     color = "#fff"
@@ -445,6 +454,9 @@ def convertImage(screen):
         for yVal in range(ylength):
             image[xVal][yVal] = '#'+ image[xVal][yVal]
     return image
+
+# draw will start the procedure that allows users to draw on the screen in
+# codeBoot using in-built functions.
 
 def draw():
     screenWidth = 180
