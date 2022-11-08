@@ -136,7 +136,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = min(currentPos.y, 
                                                         start.y)), 
                                corner2 = struct(x = max(currentPos.x, start.x), 
-                                                y = max(iniPos.y, start.y)))
+                                                y = max(currentPos.y, 
+                                                        start.y)))
                 addRectangle(imageCopy, rectY, color)
             elif currentPos.x >= iniPos.x and currentPos.y >= iniPos.y:
                 rectX = struct(corner1 = struct(x = iniPos.x, y = start.y), 
@@ -188,7 +189,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = min(currentPos.y, 
                                                         start.y)), 
                                corner2 = struct(x = max(currentPos.x, start.x), 
-                                                y = max(iniPos.y, start.y)))
+                                                y = max(currentPos.y, 
+                                                        start.y)))
                 addRectangle(imageCopy, rectY, color)
             elif currentPos.x >= iniPos.x and currentPos.y <= iniPos.y:
                 rectX = struct(corner1 = struct(x = iniPos.x, 
@@ -243,7 +245,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = min(currentPos.y, 
                                                         start.y)), 
                                corner2 = struct(x = max(currentPos.x, start.x), 
-                                                y = max(iniPos.y, start.y)))
+                                                y = max(currentPos.y, 
+                                                        start.y)))
                 addRectangle(imageCopy, rectY, color)
             elif currentPos.x <= iniPos.x and currentPos.y <= iniPos.y:
                 rectX = struct(corner1 = struct(x = currentPos.x, 
@@ -298,7 +301,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = min(currentPos.y, 
                                                         start.y)), 
                                corner2 = struct(x = max(currentPos.x, start.x), 
-                                                y = max(iniPos.y, start.y)))
+                                                y = max(currentPos.y, 
+                                                        start.y)))
                 addRectangle(imageCopy, rectY, color)
             elif currentPos.x <= iniPos.x and currentPos.y >= iniPos.y:
                 rectX = struct(corner1 = struct(x = currentPos.x, 
