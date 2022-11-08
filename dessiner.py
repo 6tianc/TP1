@@ -111,71 +111,241 @@ def drawFloatingRectangle(originalImage, start, color):
 
     # position of the previous iteration
     iniPos = struct(x = start.x, y = start.y)
-    global currentColor
-
-    while getMouse().button :
+    
+    while getMouse().button:           # continue loop while mouse button held
         currentPos = struct(x = getMouse().x, y = getMouse().y)
-
-        # if rectangle shrinks in x from the positive
-        if start.x < currentPos.x < iniPos.x:
-            
-            rectX = struct(corner1 = struct(x = currentPos.x, y = start.y),
-                           corner2 = struct(x = iniPos.x, y = currentPos.y))
-            restoreImage(originalImage, rectX)
+        if currentPos.y <24:
+            currentPos.y = 24
         
-        # if rectangle shrinks in x from the negative
-        elif start.x > currentPos.x > iniPos.x:
-            rectX = struct(corner1 = struct(x = iniPos.x, y = currentPos.y),
-                           corner2 = struct(x = currentPos.x, y = start.y))
-            restoreImage(originalImage, rectX)
-        
-        # if rectangle doesn't shrink in x, add rectangle
-        else:
-            rectangle = struct(
-                corner1 = struct(x = min(currentPos.x, start.x), 
-                                 y = min(currentPos.y, start.y)),
-                corner2 = struct(x = max(currentPos.x, start.x) + 1, 
-                                 y = max(currentPos.y, start.y)+1))
-            # stop drawing on the menu
-            if rectangle.corner1.y < 24:
-                rectangle.corner1.y = 24
-            if rectangle.corner2.y < 24:
-                rectangle.corner2.y = 24
-            addRectangle(imageCopy, rectangle, currentColor)
-        
-        # if rectangle shrinks in y from the positive
-        if start.y < currentPos.y < iniPos.y:
-            rectY = struct(corner1 = struct(x = start.x, y = currentPos.y),
-                           corner2 = struct(x = iniPos.x, y = iniPos.y))
-            restoreImage(originalImage, rectY)
-        
-        # if rectangle shrinks in y from the negative
-        elif start.y > currentPos.y > iniPos.y:
-            rectY = struct(corner1 = struct(x = iniPos.x, y = iniPos.y),
-                           corner2 = struct(x = start.x, y = currentPos.y))
-            restoreImage(originalImage, rectY)
-        
-        # if rectangle doesn't shrink in y, add rectangle
-        else:
-            rectangle = struct(
-                corner1 = struct(x = min(currentPos.x, start.x), 
-                                 y = min(currentPos.y, start.y)),
-                corner2 = struct(x = max(currentPos.x, start.x) + 1, 
-                                 y = max(currentPos.y, start.y)+1))
+        if (iniPos.x == start.x and iniPos.y == start.y):
+            rectX = struct(corner1 = struct(x = min(currentPos.x, start.x), 
+                                            y = min(currentPos.y,start.y)), 
+                           corner2 = struct(x = max(currentPos.x, start.x), 
+                                            y = max(currentPos.y, start.y)))
 
-            # stop drawing on the menu
-            if rectangle.corner1.y < 24:
-                rectangle.corner1.y = 24
-            if rectangle.corner2.y < 24:
-                rectangle.corner2.y = 24
+        if iniPos.x > start.x and iniPos.y > start.y:
+            if currentPos.x == iniPos.x and currentPos.y == iniPos.y:
+                pass
+            elif currentPos.x <= start.x or currentPos.y <= start.y:
+                rectX = struct(corner1 = struct(x = start.x, y = start.y), 
+                               corner2 = struct(x = iniPos.x, 
+                                                y = iniPos.y))
+                restoreImage(originalImage, rectX)
+                rectY = struct(corner1 = struct(x = min(currentPos.x, start.x), 
+                                                y = min(currentPos.y, 
+                                                        start.y)), 
+                               corner2 = struct(x = max(currentPos.x, start.x), 
+                                                y = max(iniPos.y, start.y)))
+                addRectangle(imageCopy, rectY, color)
+            elif currentPos.x >= iniPos.x and currentPos.y >= iniPos.y:
+                rectX = struct(corner1 = struct(x = iniPos.x, y = start.y), 
+                               corner2 = struct(x = currentPos.x, 
+                                                y = iniPos.y))
+                addRectangle(imageCopy, rectX, color)
+                rectY = struct(corner1 = struct(x = start.x, y = iniPos.y), 
+                               corner2 = struct(x = currentPos.x, 
+                                                y = currentPos.y))
+                addRectangle(imageCopy, rectY, color)
+            elif currentPos.x >=iniPos.x and currentPos.y <= iniPos.y:
+                rectX = struct(corner1 = struct(x = iniPos.x, y = start.y), 
+                               corner2 = struct(x = currentPos.x, 
+                                                y = currentPos.y))
+                addRectangle(imageCopy, rectX, color)
+                rectY = struct(corner1 = struct(x = start.x, y = currentPos.y), 
+                               corner2 = struct(x = currentPos.x, 
+                                                y = iniPos.y))
+                restoreImage(imageCopy, rectY)
+            elif currentPos.x <= iniPos.x and currentPos.y >= iniPos.y:
+                rectX = struct(corner1 = struct(x = currentPos.x, y = start.y), 
+                               corner2 = struct(x = iniPos.x, 
+                                                y = iniPos.y))
+                restoreImage(originalImage, rectX)
+                rectY = struct(corner1 = struct(x = start.x, y = iniPos.y), 
+                               corner2 = struct(x = currentPos.x, 
+                                                y = currentPos.y))
+                addRectangle(imageCopy, rectY, color)
+            elif currentPos.x <=iniPos.x and currentPos.y <= iniPos.y:
+                rectX = struct(corner1 = struct(x = currentPos.x, y = start.y), 
+                               corner2 = struct(x = iniPos.x, 
+                                                y = currentPos.y))
+                restoreImage(originalImage, rectX)  
+                rectY = struct(corner1 = struct(x = start.x, y = currentPos.y), 
+                               corner2 = struct(x = iniPos.x, 
+                                                y = iniPos.y))
+                restoreImage(imageCopy, rectY)
 
-            addRectangle(imageCopy, rectangle, currentColor)
 
-        sleep(0.01)
-        iniPos.x = currentPos.x
-        iniPos.y = currentPos.y
+        if iniPos.x > start.x and iniPos.y < start.y:
+            if currentPos.x == iniPos.x and currentPos.y == iniPos.y:
+                pass
+            elif currentPos.x <= start.x or currentPos.y >= start.y:
+                rectX = struct(corner1 = struct(x = start.x, y = iniPos.y), 
+                               corner2 = struct(x = iniPos.x, 
+                                                y = start.y))
+                restoreImage(originalImage, rectX)
+                rectY = struct(corner1 = struct(x = min(currentPos.x, start.x), 
+                                                y = min(currentPos.y, 
+                                                        start.y)), 
+                               corner2 = struct(x = max(currentPos.x, start.x), 
+                                                y = max(iniPos.y, start.y)))
+                addRectangle(imageCopy, rectY, color)
+            elif currentPos.x >= iniPos.x and currentPos.y <= iniPos.y:
+                rectX = struct(corner1 = struct(x = iniPos.x, 
+                                                y = iniPos.y), 
+                               corner2 = struct(x = currentPos.x, y = start.y))
+                addRectangle(imageCopy, rectX, color)
+                rectY = struct(corner1 = struct(x = start.x, 
+                                                y = currentPos.y), 
+                               corner2 = struct(x = currentPos.x, 
+                                                y = iniPos.y))
+                addRectangle(imageCopy, rectY, color)
+            elif currentPos.x >= iniPos.x and currentPos.y >= iniPos.y:
+                rectX = struct(corner1 = struct(x = iniPos.x, 
+                                                y = currentPos.y), 
+                               corner2 = struct(x = currentPos.x, y = start.y))
+                addRectangle(imageCopy, rectX, color)
+                rectY = struct(corner1 = struct(x = start.x, 
+                                                y = iniPos.y), 
+                               corner2 = struct(x = currentPos.x, 
+                                                y = currentPos.y))
+                restoreImage(originalImage, rectY)
+            elif currentPos.x <= iniPos.x and currentPos.y <= iniPos.y:
+                rectX = struct(corner1 = struct(x = currentPos.x, 
+                                                y = iniPos.y), 
+                               corner2 = struct(x = iniPos.x, y = start.y))
+                restoreImage(originalImage, rectX)
+                rectY = struct(corner1 = struct(x = start.x, 
+                                                y = currentPos.y), 
+                               corner2 = struct(x = currentPos.x, 
+                                                y = iniPos.y))
+                addRectangle(imageCopy, rectY, color)
+            elif currentPos.x <= iniPos.x and currentPos.y >= iniPos.y:
+                rectX = struct(corner1 = struct(x = currentPos.x, 
+                                                y = currentPos.y), 
+                               corner2 = struct(x = iniPos.x, y = start.y))
+                restoreImage(originalImage, rectX)
+                rectY = struct(corner1 = struct(x = start.x, 
+                                                y = iniPos.y), 
+                               corner2 = struct(x = iniPos.x, 
+                                                y = currentPos.y))
+                restoreImage(originalImage, rectY)
+                
+        if iniPos.x < start.x and iniPos.y < start.y:
+            if currentPos.x == iniPos.x and currentPos.y == iniPos.y:
+                pass
+            elif currentPos.x >= start.x or currentPos.y >= start.y:
+                rectX = struct(corner1 = struct(x = iniPos.x, y = iniPos.y), 
+                               corner2 = struct(x = start.x, 
+                                                y = start.y))
+                restoreImage(originalImage, rectX)
+                rectY = struct(corner1 = struct(x = min(currentPos.x, start.x), 
+                                                y = min(currentPos.y, 
+                                                        start.y)), 
+                               corner2 = struct(x = max(currentPos.x, start.x), 
+                                                y = max(iniPos.y, start.y)))
+                addRectangle(imageCopy, rectY, color)
+            elif currentPos.x <= iniPos.x and currentPos.y <= iniPos.y:
+                rectX = struct(corner1 = struct(x = currentPos.x, 
+                                                y = iniPos.y), 
+                               corner2 = struct(x = iniPos.x, y = start.y))
+                addRectangle(imageCopy, rectX, color)
+                rectY = struct(corner1 = struct(x = currentPos.x, 
+                                                y = currentPos.y), 
+                               corner2 = struct(x = start.x, 
+                                                y = iniPos.y))
+                addRectangle(imageCopy, rectY, color)
+            elif currentPos.x <= iniPos.x and currentPos.y >= iniPos.y:
+                rectX = struct(corner1 = struct(x = currentPos.x, 
+                                                y = currentPos.y), 
+                               corner2 = struct(x = iniPos.x, y = start.y))
+                addRectangle(imageCopy, rectX, color)
+                rectY = struct(corner1 = struct(x = iniPos.x, 
+                                                y = iniPos.y), 
+                               corner2 = struct(x = start.x, 
+                                                y = currentPos.y))
+                restoreImage(originalImage, rectY)
+            elif currentPos.x >= iniPos.x and currentPos.y <= iniPos.y:
+                rectX = struct(corner1 = struct(x = iniPos.x, 
+                                                y = iniPos.y), 
+                               corner2 = struct(x = currentPos.x, y = start.y))
+                restoreImage(originalImage, rectX)
+                rectY = struct(corner1 = struct(x = currentPos.x, 
+                                                y = currentPos.y), 
+                               corner2 = struct(x = start.x, 
+                                                y = iniPos.y))
+                addRectangle(imageCopy, rectY, color)
+            elif currentPos.x >= iniPos.x and currentPos.y >= iniPos.y:
+                rectX = struct(corner1 = struct(x = iniPos.x, 
+                                                y = currentPos.y), 
+                               corner2 = struct(x = currentPos.x, y = start.y))
+                restoreImage(originalImage, rectX)
+                rectY = struct(corner1 = struct(x = iniPos.x, 
+                                                y = iniPos.y), 
+                               corner2 = struct(x = start.x, 
+                                                y = currentPos.y))
+                restoreImage(originalImage, rectY)
 
-    originalImage[:] = convertImage(exportScreen())[:]
+        if iniPos.x < start.x and iniPos.y > start.y:
+            if currentPos.x == iniPos.x and currentPos.y == iniPos.y:
+                pass
+            elif currentPos.x >= start.x or currentPos.y <= start.y:
+                rectX = struct(corner1 = struct(x = iniPos.x, y = start.y), 
+                               corner2 = struct(x = start.x, 
+                                                y = iniPos.y))
+                restoreImage(originalImage, rectX)
+                rectY = struct(corner1 = struct(x = min(currentPos.x, start.x), 
+                                                y = min(currentPos.y, 
+                                                        start.y)), 
+                               corner2 = struct(x = max(currentPos.x, start.x), 
+                                                y = max(iniPos.y, start.y)))
+                addRectangle(imageCopy, rectY, color)
+            elif currentPos.x <= iniPos.x and currentPos.y >= iniPos.y:
+                rectX = struct(corner1 = struct(x = currentPos.x, 
+                                                y = start.y), 
+                               corner2 = struct(x = iniPos.x, y = iniPos.y))
+                addRectangle(imageCopy, rectX, color)
+                rectY = struct(corner1 = struct(x = currentPos.x, 
+                                                y = iniPos.y), 
+                               corner2 = struct(x = start.x, 
+                                                y = currentPos.y))
+                addRectangle(imageCopy, rectY, color)
+            elif currentPos.x <= iniPos.x and currentPos.y <= iniPos.y:
+                rectX = struct(corner1 = struct(x = currentPos.x, 
+                                                y = start.y), 
+                               corner2 = struct(x = iniPos.x, 
+                                                y = currentPos.y))
+                addRectangle(imageCopy, rectX, color)
+                rectY = struct(corner1 = struct(x = iniPos.x, 
+                                                y = currentPos.y), 
+                               corner2 = struct(x = start.x, 
+                                                y = iniPos.y))
+                restoreImage(originalImage, rectY)
+            elif currentPos.x >= iniPos.x and currentPos.y >= iniPos.y:
+                rectX = struct(corner1 = struct(x = iniPos.x, 
+                                                y = start.y), 
+                               corner2 = struct(x = currentPos.x, 
+                                                y = iniPos.y))
+                restoreImage(originalImage, rectX)
+                rectY = struct(corner1 = struct(x = currentPos.x, 
+                                                y = iniPos.y), 
+                               corner2 = struct(x = start.x, 
+                                                y = currentPos.y))
+                addRectangle(imageCopy, rectY, color)
+            elif currentPos.x >= iniPos.x and currentPos.y <= iniPos.y:
+                rectX = struct(corner1 = struct(x = iniPos.x, 
+                                                y = start.y), 
+                               corner2 = struct(x = currentPos.x, 
+                                                y = currentPos.y))
+                restoreImage(originalImage, rectX)
+                rectY = struct(corner1 = struct(x = iniPos.x, 
+                                                y = currentPos.y), 
+                               corner2 = struct(x = start.x, 
+                                                y = iniPos.y))
+                restoreImage(originalImage, rectY)
+
+        iniPos = currentPos            # update previous position for next loop
+        sleep(0.001)
+    originalImage = imageCopy
 
                         
 
@@ -188,9 +358,20 @@ def drawFloatingRectangle(originalImage, start, color):
 # output: None, image is a list of lists with the restored values
 
 def restoreImage(originalImage, rectangle):
-    for yVal in range(rectangle.corner1.y, rectangle.corner2.y):
-        for xVal in range(rectangle.corner1.x, rectangle.corner2.x):
-            setPixel(xVal, yVal, originalImage[xVal][yVal])
+    minX = rectangle.corner1.x
+    maxX = rectangle.corner2.x
+    minY = rectangle.corner1.y
+    maxY = rectangle.corner2.y
+    if minY < 24:
+        minY = 24
+    for x in range(minX, maxX):
+        for y in range(minY, maxY):
+            setPixel(x, y, originalImage[y][x])
+
+    return originalImage[minY:maxY][minX:maxX]
+    # for yVal in range(rectangle.corner1.y, rectangle.corner2.y):
+    #     for xVal in range(rectangle.corner1.x, rectangle.corner2.x):
+    #         setPixel(xVal, yVal, originalImage[xVal][yVal])
     
 
 # addRectangle draws a rectangle onto the same image given as parameter
@@ -203,6 +384,7 @@ def restoreImage(originalImage, rectangle):
 def addRectangle(image, rectangle, color):
     width = rectangle.corner2.x - rectangle.corner1.x
     height = rectangle.corner2.y - rectangle.corner1.y
+    print(width)
     fillRectangle(rectangle.corner1.x, rectangle.corner1.y, width, height, 
                   color)
     image[rectangle.corner1.x:rectangle.corner2.x][rectangle.corner1.y:
@@ -211,43 +393,33 @@ def addRectangle(image, rectangle, color):
 # handleNextClick 
 currentColor = '#fff'
 def handleNextClick(buttons):
-    iter = 0
+
     while True:
-        if getMouse().button == 1:
-            
+        position = struct(x = getMouse().x, y = getMouse().y)             
+        if getMouse().button == 1:            
             menuHeight = 24       # to correct later
             global currentColor   # to correct later
             if (findButtons(buttons, position) is None and 
                 position.y <= menuHeight):
                 pass
             elif (getScreenHeight() > position.y > 24 and 
-                  0 < position.x < getScreenWidth()):
-                image = convertImage(exportScreen())
-                drawFloatingRectangle(image, position, currentColor)
+                    0 < position.x < getScreenWidth()):
+                return True
             elif findButtons(buttons, position).erase:
                 rect = struct(corner1 = struct(x = 0, y = menuHeight), 
-                              corner2 = struct(x = getScreenWidth(), 
-                                               y = getScreenHeight()))
+                                corner2 = struct(x = getScreenWidth(), 
+                                                y = getScreenHeight()))
                 # do not draw in the menu
                 if rect.corner1.y < 24:
                     rect.corner1.y = 24
                 if rect.corner2.y < 24:
                     rect.corner2.y = 24  
                 addRectangle(convertImage(exportScreen()), rect, 
-                             buttons[0].color)
-            else:
-                currentColor = findButtons(buttons, position).color
-            sleep(0.01)
-        elif getMouse().button == 0:
-            position = struct(x = getMouse().x, y = getMouse().y)
-            sleep(0.01)
-        else:
-            sleep(0.01)
-        iter += 1
-        print(iter)
-        
-                
-
+                                buttons[0].color)
+            elif (findButtons(buttons, position) is not None):
+                return (findButtons(buttons, position).color)
+     
+        sleep(0.001)
 
     
 
@@ -289,7 +461,6 @@ def draw():
     menu = struct(corner1 = struct(x = 0, y = 0), 
                   corner2 = struct(x = screenWidth, y = menuHeight))
     currentScreen = convertImage(exportScreen())
-    currentX, currentY = getMouse().x, getMouse().y
 
     # starting color value
     currentColor = '#fff'                           
@@ -315,7 +486,15 @@ def draw():
         setPixel(spacing + i, spacing + i, "#f00")
         setPixel(buttonList[0].corner2.x - 1 - i, spacing + i, '#f00')
     
-    handleNextClick(buttonList)
+    while True:
+        position = struct(x = getMouse().x, y = getMouse().y)  
+        if handleNextClick(buttonList) == True:
+            image = convertImage(exportScreen())
+            position = struct(x = getMouse().x, y = getMouse().y)  
+            drawFloatingRectangle(image, position, currentColor)
+        else:
+            currentColor = handleNextClick(buttonList)
+        sleep(0.001)
 
 # REMOVE BEFORE HANDING IN ------------------------------------------------
 draw()
