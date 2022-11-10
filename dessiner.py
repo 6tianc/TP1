@@ -523,7 +523,7 @@ def draw():
     handleNextClick(buttonList)
 
 # REMOVE BEFORE HANDING IN ------------------------------------------------
-draw()
+# draw()
 # -------------------------------------------------------------------------
 def testDraw():
     assert (1 == 1)     # 5 to 10 asserts
