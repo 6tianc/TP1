@@ -45,6 +45,14 @@ class struct:
 
 # ----------------------------------------------------------------------------
 
+# declaration of global variables
+
+screenWidth = 180
+screenHeight = 120
+menuHeight = 24
+spacing = 6
+size = 12
+
 # createButtons will create a list of buttons with "erase" as the first button
 # the following buttons will be the colors in the list "colors".
 # parameters:   list colors (the button colors that you want), 
@@ -108,27 +116,35 @@ def findButtons(buttons, position):
 
 def drawFloatingRectangle(originalImage, start, color):
     imageCopy = originalImage[:][:]
-
+    global menuHeight
+    global screenHeight
+    global screenWidth
     # position of the previous iteration
     iniPos = struct(x = start.x, y = start.y)
     
     while getMouse().button:           # continue loop while mouse button held
         currentPos = struct(x = getMouse().x + 1, y = getMouse().y + 1)
-        if currentPos.x > getScreenWidth():
-            currentPos.x = getScreenWidth
-        if currentPos.y > getScreenHeight():
-            currentPos.y = getScreenHeight()
-        if currentPos.y <24:
-            currentPos.y = 24
-        
-        if (iniPos.x == start.x and iniPos.y == start.y):
-            rectX = struct(corner1 = struct(x = min(currentPos.x, start.x), 
-                                            y = min(currentPos.y,start.y)), 
-                           corner2 = struct(x = max(currentPos.x, start.x), 
-                                            y = max(currentPos.y, start.y)))
-            addRectangle(imageCopy, rectX, color)
 
-        if iniPos.x > start.x and iniPos.y > start.y:
+        # do not go over the drawing screen
+        if currentPos.x > screenWidth:
+            currentPos.x = screenWidth
+        if currentPos.y > screenHeight:
+            currentPos.y = screenHeight
+        
+        # do not go over the menu
+        if currentPos.y <menuHeight:
+            currentPos.y = menuHeight
+        
+        # initial position is starting position
+        # if (iniPos.x == start.x and iniPos.y == start.y):
+        #     rectX = struct(corner1 = struct(x = min(currentPos.x, start.x), 
+        #                                     y = min(currentPos.y,start.y)), 
+        #                    corner2 = struct(x = max(currentPos.x, start.x), 
+        #                                     y = max(currentPos.y, start.y)))
+        #     addRectangle(imageCopy, rectX, color)
+
+        # if you are in quadrant 1 (bottom right)
+        if iniPos.x >= start.x and iniPos.y >= start.y:
             if currentPos.x == iniPos.x and currentPos.y == iniPos.y:
                 pass
             elif currentPos.x <= start.x or currentPos.y <= start.y:
@@ -180,8 +196,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = iniPos.y))
                 restoreImage(imageCopy, rectY)
 
-
-        if iniPos.x > start.x and iniPos.y < start.y:
+        # if you are in quadrant 2 (top right)
+        if iniPos.x >= start.x and iniPos.y <= start.y:
             if currentPos.x == iniPos.x and currentPos.y == iniPos.y:
                 pass
             elif currentPos.x <= start.x or currentPos.y >= start.y:
@@ -236,8 +252,9 @@ def drawFloatingRectangle(originalImage, start, color):
                                corner2 = struct(x = iniPos.x, 
                                                 y = currentPos.y))
                 restoreImage(originalImage, rectY)
-                
-        if iniPos.x < start.x and iniPos.y < start.y:
+
+        # if you are in quadrant 3 (top left)        
+        if iniPos.x <= start.x and iniPos.y <= start.y:
             if currentPos.x == iniPos.x and currentPos.y == iniPos.y:
                 pass
             elif currentPos.x >= start.x or currentPos.y >= start.y:
@@ -293,7 +310,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = currentPos.y))
                 restoreImage(originalImage, rectY)
 
-        if iniPos.x < start.x and iniPos.y > start.y:
+        # if you are in quadrant 4 (bottom left)
+        if iniPos.x <= start.x and iniPos.y >= start.y:
             if currentPos.x == iniPos.x and currentPos.y == iniPos.y:
                 pass
             elif currentPos.x >= start.x or currentPos.y <= start.y:
@@ -367,12 +385,14 @@ def drawFloatingRectangle(originalImage, start, color):
 # output: No output, image is a list of lists with the restored values
 
 def restoreImage(originalImage, rectangle):
+    global menuHeight
     minX = rectangle.corner1.x
     maxX = rectangle.corner2.x
     minY = rectangle.corner1.y
     maxY = rectangle.corner2.y
-    if minY < 24:
-        minY = 24
+    # ne pas dessiner sur le menu
+    if minY < menuHeight:
+        minY = menuHeight
     for x in range(minX, maxX):
         for y in range(minY, maxY):
             setPixel(x, y, originalImage[y][x])
@@ -389,7 +409,6 @@ def restoreImage(originalImage, rectangle):
 def addRectangle(image, rectangle, color):
     width = rectangle.corner2.x - rectangle.corner1.x
     height = rectangle.corner2.y - rectangle.corner1.y
-    print(width)
     fillRectangle(rectangle.corner1.x, rectangle.corner1.y, width, height, 
                   color)
     image[rectangle.corner1.x:rectangle.corner2.x][rectangle.corner1.y:
@@ -407,7 +426,7 @@ def addRectangle(image, rectangle, color):
 def handleNextClick(buttons):
     image = convertImage(exportScreen())
     color = "#fff"
-    menuHeight = 24       # to correct later
+    global menuHeight        # to correct later
     while True:
         position = struct(x = getMouse().x, y = getMouse().y)             
         if getMouse().button == 1:            
@@ -418,22 +437,22 @@ def handleNextClick(buttons):
                                 corner2 = struct(x = getScreenWidth(), 
                                                 y = getScreenHeight()))
                 # do not draw in the menu
-                if rect.corner1.y < 24:
-                    rect.corner1.y = 24
-                if rect.corner2.y < 24:
-                    rect.corner2.y = 24  
+                if rect.corner1.y < menuHeight:
+                    rect.corner1.y = menuHeight
+                if rect.corner2.y < menuHeight:
+                    rect.corner2.y = menuHeight
                 addRectangle(convertImage(exportScreen()), rect, 
                                 buttons[0].color)
                 image = convertImage(exportScreen())
             elif (findButtons(buttons, position) is not None):
                 color = findButtons(buttons, position).color
-            elif (getScreenHeight() > position.y > 24 and 
+            elif (getScreenHeight() > position.y > menuHeight and 
                     0 < position.x < getScreenWidth()):
                 drawFloatingRectangle(image, position, color)
             else:
                 pass
      
-        sleep(0.001)
+        sleep(0.01)
 
     
 
@@ -459,11 +478,11 @@ def convertImage(screen):
 # codeBoot using in-built functions.
 
 def draw():
-    screenWidth = 180
-    screenHeight = 120
-    menuHeight = 24
-    spacing = 6
-    size = 12
+    global screenWidth 
+    global screenHeight 
+    global menuHeight 
+    global spacing
+    global size 
     white = "#fff"
     black =  "#000"
     red = "#f00"
