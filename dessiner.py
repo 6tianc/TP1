@@ -574,6 +574,39 @@ def draw():
 # draw()
 # -------------------------------------------------------------------------
 def testDraw():
-    assert (1 == 1)     # 5 to 10 asserts
+    # 5 to 10 asserts
+    
+    # assert for the function createButtons
+    assert (createButtons(["#f00"], 12, 6, "#fff") == 
+            [struct(corner1=struct(x=6, y=6), 
+            corner2=struct(x=18, y=18), color='#fff', erase=True), 
+            struct(corner1=struct(x=24, y=6), corner2=struct(x=36, y=18),
+            color='#f00', erase=False)])
+    
+    # assert for the function findButons if the position is in the button
+    assert (findButtons(createButtons(["#f00"], 12, 6, "#fff"), 
+            struct(x=7, y=7)) 
+            == 
+            struct(corner1=struct(x=6, y=6), corner2=struct(x=18, y=18), 
+            color='#fff', erase=True))
+    
+    # assert for the function findButons if the position is not in the button
+    assert (findButtons(createButtons(["#f00"], 12, 6, "#fff"),
+            struct(x=5, y=5))
+            ==
+            None)
+    
+    # assert for the function convertImage off a 3 by 3 black screen
+    setScreenMode(3,3)
+    assert (convertImage(exportScreen()) == [['#000', '#000', '#000'], 
+                                             ['#000', '#000', '#000'], 
+                                             ['#000', '#000', '#000']])
+    
+    # assert for the function addRectangle off a 3 by 3 black screen with a
+    # 1 by 2 green rectangle in the top left
+    addRectangle(convertImage(exportScreen()),
+                 struct(corner1 = struct(x =0, y =0),
+                       corner2 = struct(x = 2, y = 1)), "#0f0")
+    assert(exportScreen() == '#0f0#0f0#000\n#000#000#000\n#000#000#000')
 
 testDraw()
