@@ -115,16 +115,19 @@ def findButtons(buttons, position):
 # output: No output, the originalImage value will get changed.
 
 def drawFloatingRectangle(originalImage, start, color):
+    # creates imageCopy, a deep copy of the originalImage
     imageCopy = []
     for i in originalImage:
         imageCopy.append(i[:])
     global menuHeight
     global screenHeight
     global screenWidth
-    # position of the previous iteration
+    # position of the previous iteration (0.01s ago)
     iniPos = struct(x = start.x, y = start.y)
     
     while getMouse().button:           # continue loop while mouse button held
+
+        # current position of the mouse
         currentPos = struct(x = getMouse().x + 1, y = getMouse().y + 1)
 
         # do not go over the drawing screen
@@ -137,10 +140,14 @@ def drawFloatingRectangle(originalImage, start, color):
         if currentPos.y < menuHeight:
             currentPos.y = menuHeight
         
-        # if you are in quadrant 1 (bottom right)
+        # if you are in quadrant 1 (bottom right from the start position)
         if iniPos.x >= start.x and iniPos.y >= start.y:
+
+            # if the mouse has not moved since the last iteration
             if currentPos.x == iniPos.x and currentPos.y == iniPos.y:
                 pass
+
+            # if the mouse moved to another quadrant
             elif currentPos.x <= start.x or currentPos.y <= start.y:
                 rectX = struct(corner1 = struct(x = start.x, y = start.y), 
                                corner2 = struct(x = iniPos.x, 
@@ -153,6 +160,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = max(currentPos.y, 
                                                         start.y)))
                 addRectangle(imageCopy, rectY, color)
+
+            # if the mouse has moved towards the bottom right
             elif currentPos.x >= iniPos.x and currentPos.y >= iniPos.y:
                 rectX = struct(corner1 = struct(x = iniPos.x, y = start.y), 
                                corner2 = struct(x = currentPos.x, 
@@ -162,6 +171,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                corner2 = struct(x = currentPos.x, 
                                                 y = currentPos.y))
                 addRectangle(imageCopy, rectY, color)
+            
+            # if the mouse has moved towards the top right
             elif currentPos.x >=iniPos.x and currentPos.y <= iniPos.y:
                 rectX = struct(corner1 = struct(x = iniPos.x, y = start.y), 
                                corner2 = struct(x = currentPos.x, 
@@ -171,6 +182,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                corner2 = struct(x = currentPos.x, 
                                                 y = iniPos.y))
                 restoreImage(originalImage, rectY)
+            
+            # if the mouse has moved towards the bottom left
             elif currentPos.x <= iniPos.x and currentPos.y >= iniPos.y:
                 rectX = struct(corner1 = struct(x = currentPos.x, y = start.y), 
                                corner2 = struct(x = iniPos.x, 
@@ -180,6 +193,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                corner2 = struct(x = currentPos.x, 
                                                 y = currentPos.y))
                 addRectangle(imageCopy, rectY, color)
+            
+            # if the mouse has moved towards the top left
             elif currentPos.x <=iniPos.x and currentPos.y <= iniPos.y:
                 rectX = struct(corner1 = struct(x = currentPos.x, y = start.y), 
                                corner2 = struct(x = iniPos.x, 
@@ -190,10 +205,14 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = iniPos.y))
                 restoreImage(originalImage, rectY)
 
-        # if you are in quadrant 2 (top right)
+        # if you are in quadrant 2 (top right from the start position)
         if iniPos.x >= start.x and iniPos.y <= start.y:
+
+            # if the mouse has not moved
             if currentPos.x == iniPos.x and currentPos.y == iniPos.y:
                 pass
+
+            # if the mouse has moved to another quadrant
             elif currentPos.x <= start.x or currentPos.y >= start.y:
                 rectX = struct(corner1 = struct(x = start.x, y = iniPos.y), 
                                corner2 = struct(x = iniPos.x, 
@@ -206,6 +225,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = max(currentPos.y, 
                                                         start.y)))
                 addRectangle(imageCopy, rectY, color)
+            
+            # if the mouse has moved towards the top right
             elif currentPos.x >= iniPos.x and currentPos.y <= iniPos.y:
                 rectX = struct(corner1 = struct(x = iniPos.x, 
                                                 y = iniPos.y), 
@@ -216,6 +237,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                corner2 = struct(x = currentPos.x, 
                                                 y = iniPos.y))
                 addRectangle(imageCopy, rectY, color)
+            
+            # if the mouse has moved towards the bottom right
             elif currentPos.x >= iniPos.x and currentPos.y >= iniPos.y:
                 rectX = struct(corner1 = struct(x = iniPos.x, 
                                                 y = currentPos.y), 
@@ -226,6 +249,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                corner2 = struct(x = currentPos.x, 
                                                 y = currentPos.y))
                 restoreImage(originalImage, rectY)
+
+            # if the mouse has moved towards the top left
             elif currentPos.x <= iniPos.x and currentPos.y <= iniPos.y:
                 rectX = struct(corner1 = struct(x = currentPos.x, 
                                                 y = iniPos.y), 
@@ -236,6 +261,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                corner2 = struct(x = currentPos.x, 
                                                 y = iniPos.y))
                 addRectangle(imageCopy, rectY, color)
+
+            # if the mouse has moved towards the bottom left
             elif currentPos.x <= iniPos.x and currentPos.y >= iniPos.y:
                 rectX = struct(corner1 = struct(x = currentPos.x, 
                                                 y = currentPos.y), 
@@ -247,10 +274,14 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = currentPos.y))
                 restoreImage(originalImage, rectY)
 
-        # if you are in quadrant 3 (top left)        
+        # if you are in quadrant 3 (top left from the start position)        
         if iniPos.x <= start.x and iniPos.y <= start.y:
+
+            # if the mouse has not moved
             if currentPos.x == iniPos.x and currentPos.y == iniPos.y:
                 pass
+
+            # if the mouse has moved to another quadrant
             elif currentPos.x >= start.x or currentPos.y >= start.y:
                 rectX = struct(corner1 = struct(x = iniPos.x, y = iniPos.y), 
                                corner2 = struct(x = start.x, 
@@ -263,6 +294,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = max(currentPos.y, 
                                                         start.y)))
                 addRectangle(imageCopy, rectY, color)
+            
+            # if the mouse has moved towards the top left
             elif currentPos.x <= iniPos.x and currentPos.y <= iniPos.y:
                 rectX = struct(corner1 = struct(x = currentPos.x, 
                                                 y = iniPos.y), 
@@ -273,6 +306,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                corner2 = struct(x = start.x, 
                                                 y = iniPos.y))
                 addRectangle(imageCopy, rectY, color)
+
+            # if the mouse has moved towards the bottom left
             elif currentPos.x <= iniPos.x and currentPos.y >= iniPos.y:
                 rectX = struct(corner1 = struct(x = currentPos.x, 
                                                 y = currentPos.y), 
@@ -283,6 +318,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                corner2 = struct(x = start.x, 
                                                 y = currentPos.y))
                 restoreImage(originalImage, rectY)
+
+            # if the mouse has moved towards the top right
             elif currentPos.x >= iniPos.x and currentPos.y <= iniPos.y:
                 rectX = struct(corner1 = struct(x = iniPos.x, 
                                                 y = iniPos.y), 
@@ -293,6 +330,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                corner2 = struct(x = start.x, 
                                                 y = iniPos.y))
                 addRectangle(imageCopy, rectY, color)
+
+            # if the mouse has moved towards the bottom right
             elif currentPos.x >= iniPos.x and currentPos.y >= iniPos.y:
                 rectX = struct(corner1 = struct(x = iniPos.x, 
                                                 y = currentPos.y), 
@@ -304,10 +343,14 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = currentPos.y))
                 restoreImage(originalImage, rectY)
 
-        # if you are in quadrant 4 (bottom left)
+        # if you are in quadrant 4 (bottom left from the start position)
         if iniPos.x <= start.x and iniPos.y >= start.y:
+
+            # if the mouse has not moved
             if currentPos.x == iniPos.x and currentPos.y == iniPos.y:
                 pass
+
+            # if the mouse has moved to another quadrant
             elif currentPos.x >= start.x or currentPos.y <= start.y:
                 rectX = struct(corner1 = struct(x = iniPos.x, y = start.y), 
                                corner2 = struct(x = start.x, 
@@ -320,6 +363,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = max(currentPos.y, 
                                                         start.y)))
                 addRectangle(imageCopy, rectY, color)
+
+            # if the mouse has moved towards the bottom left
             elif currentPos.x <= iniPos.x and currentPos.y >= iniPos.y:
                 rectX = struct(corner1 = struct(x = currentPos.x, 
                                                 y = start.y), 
@@ -330,6 +375,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                corner2 = struct(x = start.x, 
                                                 y = currentPos.y))
                 addRectangle(imageCopy, rectY, color)
+
+            # if the mouse has moved towards the top left
             elif currentPos.x <= iniPos.x and currentPos.y <= iniPos.y:
                 rectX = struct(corner1 = struct(x = currentPos.x, 
                                                 y = start.y), 
@@ -341,6 +388,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                corner2 = struct(x = start.x, 
                                                 y = iniPos.y))
                 restoreImage(originalImage, rectY)
+            
+            # if the mouse has moved towards the bottom right
             elif currentPos.x >= iniPos.x and currentPos.y >= iniPos.y:
                 rectX = struct(corner1 = struct(x = iniPos.x, 
                                                 y = start.y), 
@@ -352,6 +401,8 @@ def drawFloatingRectangle(originalImage, start, color):
                                corner2 = struct(x = start.x, 
                                                 y = currentPos.y))
                 addRectangle(imageCopy, rectY, color)
+            
+            # if the mouse has moved towards the top right
             elif currentPos.x >= iniPos.x and currentPos.y <= iniPos.y:
                 rectX = struct(corner1 = struct(x = iniPos.x, 
                                                 y = start.y), 
@@ -366,8 +417,8 @@ def drawFloatingRectangle(originalImage, start, color):
 
         iniPos = currentPos            # update previous position for next loop
         sleep(0.01)
-    # updates the original image after lifting the click
 
+    # updates the original image after lifting the finger
     minX = min(iniPos.x, start.x)
     maxX = max(iniPos.x, start.x)
     minY = min(iniPos.y, start.y)
@@ -472,6 +523,8 @@ def convertImage(screen):
 
 # draw will start the procedure that allows users to draw on the screen in
 # codeBoot using in-built functions.
+# parameters: none
+# outputs: none, changes will be reflected on the screen in Code Boot
 
 def draw():
     global screenWidth 
@@ -518,7 +571,7 @@ def draw():
     handleNextClick(buttonList)
 
 # REMOVE BEFORE HANDING IN ------------------------------------------------
-draw()
+# draw()
 # -------------------------------------------------------------------------
 def testDraw():
     assert (1 == 1)     # 5 to 10 asserts
