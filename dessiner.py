@@ -140,7 +140,7 @@ def drawFloatingRectangle(originalImage, start, color):
         if currentPos.y < menuHeight:
             currentPos.y = menuHeight
         
-        # if you are in quadrant 1 (bottom right from the start position)
+        # if mouse is in quadrant 1 (bottom right from the start position)
         if iniPos.x >= start.x and iniPos.y >= start.y:
 
             # if the mouse has not moved since the last iteration
@@ -205,7 +205,7 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = iniPos.y))
                 restoreImage(originalImage, rectY)
 
-        # if you are in quadrant 2 (top right from the start position)
+        # if mouse is in quadrant 2 (top right from the start position)
         if iniPos.x >= start.x and iniPos.y <= start.y:
 
             # if the mouse has not moved
@@ -274,7 +274,7 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = currentPos.y))
                 restoreImage(originalImage, rectY)
 
-        # if you are in quadrant 3 (top left from the start position)        
+        # if mouse is in quadrant 3 (top left from the start position)        
         if iniPos.x <= start.x and iniPos.y <= start.y:
 
             # if the mouse has not moved
@@ -343,7 +343,7 @@ def drawFloatingRectangle(originalImage, start, color):
                                                 y = currentPos.y))
                 restoreImage(originalImage, rectY)
 
-        # if you are in quadrant 4 (bottom left from the start position)
+        # if mouse is in quadrant 4 (bottom left from the start position)
         if iniPos.x <= start.x and iniPos.y >= start.y:
 
             # if the mouse has not moved
