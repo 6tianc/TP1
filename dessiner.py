@@ -3,47 +3,6 @@
 # November 1st 2022
 # Travail Pratique 1
 
-#TO BE REMOVED BEFORE HANDING IN --------------------------------------------
-
-# codeBoot functions 
-
-def setScreenMode():
-    pass
-
-def getScreenWidth():
-    pass
-
-def getScreenHeight():
-    pass
-
-def setPixel(x,y,color):
-    pass
-
-def fillRectangle(x,y,width,height,color):
-    pass
-
-def getPixel(x,y):
-    pass
-
-def getMouse():
-    pass
-
-def exportScreen():
-    pass
-
-def sleep(second):
-    pass
-
-# class struct allows for python to have structs like in CodeBoot
-
-class struct:
- def __init__(self, **fields):
-    self.__dict__.update(fields)
- def __repr__(self):
-    return 'struct('+(', '.join(list(map(lambda f:f+'='+repr(self.__dict__[f]),
-                                         self.__dict__))))+')'
-
-# ----------------------------------------------------------------------------
 
 # declaration of global variables
 
@@ -570,9 +529,6 @@ def draw():
 
     handleNextClick(buttonList)
 
-# REMOVE BEFORE HANDING IN ------------------------------------------------
-# draw()
-# -------------------------------------------------------------------------
 def testDraw():
     # 5 to 10 asserts
     
