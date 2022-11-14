@@ -443,7 +443,7 @@ def restoreImage(originalImage, rectangle):
     maxX = rectangle.corner2.x
     minY = rectangle.corner1.y
     maxY = rectangle.corner2.y
-    # ne pas dessiner sur le menu
+    # do not draw on the menu
     if minY < menuHeight:
         minY = menuHeight
     for x in range(minX, maxX):
@@ -480,7 +480,7 @@ def addRectangle(image, rectangle, color):
 def handleNextClick(buttons):
     image = convertImage(exportScreen())
     color = "#fff"
-    global menuHeight        # to correct later
+    global menuHeight        
     while True:
         position = struct(x = getMouse().x, y = getMouse().y)             
         if getMouse().button == 1:            
