@@ -402,9 +402,6 @@ def restoreImage(originalImage, rectangle):
     maxX = rectangle.corner2.x
     minY = rectangle.corner1.y
     maxY = rectangle.corner2.y
-    # do not draw on the menu
-    if minY < menuHeight:
-        minY = menuHeight
     for x in range(minX, maxX):
         for y in range(minY, maxY):
             setPixel(x, y, originalImage[y][x])
